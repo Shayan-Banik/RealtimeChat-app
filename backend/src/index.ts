@@ -5,6 +5,8 @@ import { Env } from "./config/env.config";
 import cookieParser from "cookie-parser";
 import { asyncHandler } from "./middlewares/asyncHandle.middleware";
 import { HTTPSTATUS } from "./config/http.config";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
+import connectDB from "./config/database.config";
 
 const app = express();
 
@@ -28,6 +30,9 @@ app.get(
   }),
 );
 
-app.listen(Env.PORT, () => {
+app.use(errorHandler)
+
+app.listen(Env.PORT, async () => {
+  await connectDB();
   console.log(`Serer running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
 });

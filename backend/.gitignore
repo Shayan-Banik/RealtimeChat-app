@@ -1,0 +1,16 @@
+node_modules
+.env
+*.env
+.env.*
+
+# Logs
+*.log
+# Temporary files
+*.tmp
+*~
+node_modules/
+jspm_packages/
+bower_components/
+web_modules/
+
+.DS_Store

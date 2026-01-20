@@ -13,7 +13,7 @@ export const setJWTAuthCookie = ({ res, userId }: Cookie) => {
   const expireIn = Env.JWT_EXPIRES_IN as Time;
   const token = jwt.sign(payload, Env.JWT_SECRET, {
     audience: ["user"],
-    expireIn: expireIn || "7d",
+    expiresIn: expireIn || "7d",
   });
   return res.cookie("accesstoken", token, {
       maxAge: 1000 * 60 * 60 * 24 * 7,

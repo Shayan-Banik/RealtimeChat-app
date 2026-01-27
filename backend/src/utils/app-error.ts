@@ -1,3 +1,4 @@
+import { Error } from "mongoose";
 import { HTTPSTATUS, HttpStatusCodeType } from "../config/http.config";
 
 export const ErrorCodes = {

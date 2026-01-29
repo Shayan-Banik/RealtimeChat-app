@@ -1,4 +1,4 @@
-export const getEnv = (key: string, dafaultValue: string) => {
+export const getEnv = (key: string, dafaultValue?: string) => {
   const value = process.env[key] ?? dafaultValue;
 
   if (!value) {

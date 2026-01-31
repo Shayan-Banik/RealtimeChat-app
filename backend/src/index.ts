@@ -10,8 +10,14 @@ import connectDB from "./config/database.config";
 import passport from "passport";
 import "./config/passport.config";
 import routers from "./routes";
+import http from 'http'
+import { initializeScocket } from "./lib/socket";
 
 const app = express();
+const server = http.createServer(app)
+
+//socket.io implementation
+initializeScocket(server)
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
@@ -39,7 +45,7 @@ app.use("/api", routers);
 
 app.use(errorHandler);
 
-app.listen(Env.PORT, async () => {
+server.listen(Env.PORT, async () => {
   await connectDB();
   console.log(`Serer running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
 });

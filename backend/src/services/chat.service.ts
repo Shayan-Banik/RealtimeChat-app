@@ -1,3 +1,4 @@
+import { emitNewChatToParticipants } from "../lib/socket";
 import ChatModel from "../models/chat.model";
 import MessageModel from "../models/message.model";
 import UserModel from "../models/user.models";
@@ -28,7 +29,7 @@ export const createChatService = async (
 
     return newChat.save();
   } else if (participantId) {
-    const otherUser = await UserModel.findById( participantId );
+    const otherUser = await UserModel.findById(participantId);
 
     if (!otherUser) {
       throw new NotFoundException("User not found");
@@ -48,6 +49,15 @@ export const createChatService = async (
       isGroup: false,
     });
   }
+
+  //add Web-Socket here
+  const populatedChat = await chat?.populate("participants", "name avatar");
+  const participantIdStrings = populatedChat?.participants?.map((pop) => {
+    return pop._id?.toString();
+  });
+
+  emitNewChatToParticipants(participantIdStrings, populatedChat);
+
   return chat;
 };
 
@@ -76,7 +86,7 @@ export const getSingleChatService = async (chatId: string, userId: string) => {
   if (!chat) {
     throw new BadRequestException("Chat not found you are not authorized");
   }
-  
+
   const messages = await MessageModel.find({ chatId })
     .populate("sender", "name avater")
     .populate({
@@ -90,5 +100,20 @@ export const getSingleChatService = async (chatId: string, userId: string) => {
     .sort({ createdAt: -1 });
 
   return { chat, messages };
-    
+};
+
+export const validateChatParticipants = async (
+  chatId: string,
+  userId: string,
+) => {
+  const chat = await ChatModel.findOne({
+    _id: chatId,
+    participants: { $in: [userId] },
+  });
+
+  if (!chat) {
+    throw new BadRequestException("Chat not found you are not authorized");
+  }
+
+  return chat;
 };
